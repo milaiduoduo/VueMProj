@@ -92,7 +92,7 @@
       },
       _onScrollEnd(){
         // 用来计算currentPageIndex
-        console.log('_onScrollEnd');
+//        console.log('_onScrollEnd');
         let pageIndex = this.slider.getCurrentPage().pageX;
 //        console.log('pageIndex:', pageIndex);
         if (this.loop) {
@@ -106,7 +106,7 @@
       },
       _play(){
         let pageIndex = this.slider.getCurrentPage().pageX + 1;
-        console.log('pageIndex:', pageIndex);
+//        console.log('pageIndex:', pageIndex);
         clearTimeout(this.timer);
         this.timer = setTimeout(() => {
           this.slider.goToPage(pageIndex, 0, this.snapSpeed);

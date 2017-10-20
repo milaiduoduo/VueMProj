@@ -33,6 +33,6 @@ export function getDiscList() {
     return new Promise((resolve) => {
       resolve(res.data);
     })
-    //等价于 Promise.resolve(res.data);
+    // 等价于 Promise.resolve(res.data);
   })
 }
