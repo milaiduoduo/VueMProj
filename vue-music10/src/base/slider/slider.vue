@@ -48,6 +48,14 @@
         }
       }, 20);
     },
+    beforeDestroy(){
+      console.log('beforeDestroy');
+    },
+    destroyed(){
+      console.log('destroyed');
+      this.slider.disable();
+      clearTimeout(this.timer);
+    },
     methods: {
       _setSliderWidth(isResize) {
         this.children = this.$refs.sliderGroup.children;
