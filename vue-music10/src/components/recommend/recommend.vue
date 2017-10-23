@@ -28,6 +28,9 @@
           </ul>
         </div>
       </div>
+      <div class="loading-container" v-show="!discList.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
@@ -38,11 +41,13 @@
   import Slider from 'base/slider/slider';
   //  封装了scroll之后，父组件只需要做，1、引用 2、使用标签 3、:data赋值 4、写内部slot
   import Scroll from 'base/scroll/scroll';
+  import Loading from 'base/loading/loading';
 
   export default {
     components: {
       Slider,
-      Scroll
+      Scroll,
+      Loading
     },
     data() {
       return {
@@ -52,7 +57,9 @@
     },
     created() {
       this._getRecommend();
-      this._getDiscList();
+      setTimeout(() => {
+        this._getDiscList()
+      }, 10000);
     },
     methods: {
       loadImage(){
