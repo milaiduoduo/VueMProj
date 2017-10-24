@@ -11,3 +11,12 @@ export function hasClass(el, className) {
   let reg = new RegExp('(^|\\s)' + className + '(\\s|$)');
   return reg.test(el.className);
 }
+
+export function getAndSetAttributeData(el, name, val) {
+  let newName = 'data-' + name;
+  if (!val) {
+    return el.getAttribute(newName);
+  } else {
+    return el.setAttribute(newName, val);
+  }
+}
