@@ -1,12 +1,13 @@
 <template>
   <div class="singer">
-
+    <list-view :data="this.singers"></list-view>
   </div>
 </template>
 <script type='text/ecmascript-6'>
   import {ERR_OK} from 'api/config';
   import {getSingerList} from 'api/singer';
   import Singer from 'common/js/singer';
+  import ListView from 'base/listview/listview';
   const HOT_NAME = '热门';
   const HOT_SINGER_LEN = 10;
   export default{
@@ -22,7 +23,7 @@
       _getSingerList(){
         getSingerList().then((res) => {
           if (res.code === ERR_OK) {
-            console.log(this._normalizeSinger(res.data.list));
+            this.singers = this._normalizeSinger(res.data.list);
           }
         })
       },
@@ -61,7 +62,7 @@
         let ret = [];
         let hot = [];
         for (let key in map) {
-          console.log('maps key', key);
+          // console.log('maps key:', key);
           let val = map[key];
           if (val.title.match(/[a-zA-Z]/)) {
             ret.push(val);
@@ -76,9 +77,16 @@
         return hot.concat(ret);
       }
 
+    },
+    components: {
+      ListView
     }
   };
 </script>
 <style lang='stylus' rel='stylesheet/stylus'>
-
+  .singer
+    position: fixed
+    top: 88px
+    bottom: 0
+    width: 100%
 </style>
