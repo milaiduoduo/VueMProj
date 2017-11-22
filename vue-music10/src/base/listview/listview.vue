@@ -11,6 +11,13 @@
         </ul>
       </li>
     </ul>
+    <div class="list-shortcut">
+      <ul>
+        <li class="item" v-for="item in shortcutList">
+          {{item}}
+        </li>
+      </ul>
+    </div>
   </scroll>
 </template>
 <script>
@@ -24,6 +31,13 @@
     },
     components: {
       Scroll
+    },
+    computed: {
+      shortcutList(){
+        return this.data.map((item) => {
+          return item.title.substr(0, 1);
+        })
+      }
     }
   }
 </script>
