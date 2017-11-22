@@ -1,15 +1,17 @@
 <template>
-  <div class="singer">
+  <div class="singer" ref="singer">
     <list-view :data="this.singers"></list-view>
   </div>
 </template>
-<script type='text/ecmascript-6'>
-  import {ERR_OK} from 'api/config';
+<script>
   import {getSingerList} from 'api/singer';
+  import {ERR_OK} from 'api/config';
   import Singer from 'common/js/singer';
-  import ListView from 'base/listview/listview';
-  const HOT_NAME = '热门';
+  import ListView from 'base/listview/listview'
+
   const HOT_SINGER_LEN = 10;
+  const HOT_NAME = '热点';
+
   export default{
     data(){
       return {
@@ -18,6 +20,9 @@
     },
     created(){
       this._getSingerList();
+    },
+    components: {
+      ListView
     },
     methods: {
       _getSingerList(){
@@ -33,10 +38,10 @@
             title: HOT_NAME,
             items: []
           }
-        }
+        };
+//        构造热点歌手数据结构
         let i = 0;
         for (let item of list) {
-//            完成对hot数据的构造
           if (i < HOT_SINGER_LEN) {
             map.hot.items.push(new Singer({
               name: item.Fsinger_name,
@@ -44,7 +49,7 @@
             }))
             i++;
           }
-//          完成对a-z歌手数据的构造
+//            构造a-z歌手数据结构
           const key = item.Findex;
           if (!map[key]) {
             map[key] = {
@@ -58,30 +63,24 @@
           }))
         }
 
-        //          对以上的无序数据，进行hot,a-z的序列构造
-        let ret = [];
+//          序列化歌手列表，热点排前面，a-z歌手按顺序排列。
         let hot = [];
+        let other = [];
         for (let key in map) {
-          // console.log('maps key:', key);
           let val = map[key];
-          if (val.title.match(/[a-zA-Z]/)) {
-            ret.push(val);
-          } else if (val.title === HOT_NAME) {
-            hot.push(val);
+          if (key === 'hot') {
+            hot.push(val)
+          } else if (val.title.match(/[a-zA-Z]/)) {
+            other.push(val);
           }
         }
-        // 给a-z的数组排序
-        ret.sort((a, b) => {
+        other.sort((a, b) => {
           return a.title.charCodeAt(0) - b.title.charCodeAt(0);
         })
-        return hot.concat(ret);
+        return hot.concat(other);
       }
-
-    },
-    components: {
-      ListView
     }
-  };
+  }
 </script>
 <style lang='stylus' rel='stylesheet/stylus'>
   .singer
@@ -90,3 +89,4 @@
     bottom: 0
     width: 100%
 </style>
+

@@ -1,7 +1,7 @@
 <template>
-  <scroll class="listview" :data="data" ref="listview">
+  <scroll class="listview" :data='data' ref="listview">
     <ul>
-      <li v-for="group in data" class="list-group" ref="listGroup">
+      <li v-for="group in data" class="list-group">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
           <li v-for="item in group.items" class="list-group-item">
@@ -11,20 +11,10 @@
         </ul>
       </li>
     </ul>
-    <div class="list-shortcut">
-      <ul>
-        <li class="item" :data-index="index" v-for="(item,index) in shortcutList"
-            @touchstart.stop.prevent="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove">
-          {{item}}
-        </li>
-      </ul>
-    </div>
   </scroll>
 </template>
-<script type='text/ecmascript-6'>
+<script>
   import Scroll from 'base/scroll/scroll';
-  import {getAndSetAttributeData} from 'common/js/dom';
-  const ANCHOR_HEIGHT = 18;
   export default{
     props: {
       data: {
@@ -34,33 +24,6 @@
     },
     components: {
       Scroll
-    },
-    created(){
-      this.touch = {};
-    },
-    computed: {
-      shortcutList() {
-        return this.data.map((item) => {
-          // console.log(item.title.substr(0, 1));
-          return item.title.substr(0, 1);
-        })
-      }
-    },
-    methods: {
-      onShortcutTouchStart(e){
-        let firstTouch = e.touches[0];
-        this.touch.y1 = firstTouch.pageY;
-        let anchorIndex = getAndSetAttributeData(e.target, 'index');
-        this.touch.firstAnchorIndex = parseInt(anchorIndex);
-        this.$refs.listview.scrollToElement(this.$refs.listGroup[anchorIndex], 0);
-      },
-      onShortcutTouchMove(e){
-        let firstTouch = e.touches[0];
-        this.touch.y2 = firstTouch.pageY;
-        let disIndex = Math.floor(this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT;
-        let finalIndex = this.touch.firstAnchorIndex + disIndex;
-        this.$refs.listview.scrollToElement(this.$refs.listGroup[finalIndex], 0);
-      }
     }
   }
 </script>
@@ -131,4 +94,3 @@
       top: 50%
       transform: translateY(-50%)
 </style>
-
