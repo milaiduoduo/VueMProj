@@ -25,12 +25,21 @@
         </li>
       </ul>
     </div>
+    <div class="list-fixed" ref="fixed" v-show="fixedTitle">
+      <div class="fixed-title">{{fixedTitle}}</div>
+    </div>
+    <div v-show="!data.length" class="loading-container">
+      <loading></loading>
+    </div>
   </scroll>
 </template>
 <script>
   import Scroll from 'base/scroll/scroll';
+  import Loading from 'base/loading/loading';
   import {getAndSetAttributeData} from 'common/js/dom';
+  
   const ANCHOR_HEIGHT = 18;
+  const TITLE_HEIGHT = 30;
 
   export default{
     props: {
@@ -40,12 +49,14 @@
       }
     },
     components: {
-      Scroll
+      Scroll,
+      Loading
     },
     data(){
       return {
         scrollY: -1,
-        currentIndex: 0
+        currentIndex: 0,
+        diff: -1
       }
     },
     computed: {
@@ -53,6 +64,12 @@
         return this.data.map((item) => {
           return item.title.substr(0, 1);
         })
+      },
+      fixedTitle(){
+        if (this.scrollY > 0) {
+          return '';
+        }
+        return this.data[this.currentIndex] ? this.data[this.currentIndex].title : '';
       }
     },
     created(){
@@ -82,7 +99,7 @@
         if (!index && index !== 0) return;
         if (index < 0) index = 0;
         if (index > this.listHeight.length - 2) index = this.listHeight.length - 2;
-        console.log('index:', index);
+//        console.log('index:', index);
         this.scrollY = -this.listHeight[index];
         this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0);
       },
@@ -108,6 +125,8 @@
           let height2 = listHeight[i + 1];
           if (-newY >= height1 && -newY < height2) {
             this.currentIndex = i;
+//            每个group底部跟fixed的title顶部那一条线的距离差
+            this.diff = height2 + newY;
             return;
           }
         }
@@ -123,6 +142,15 @@
       scrollY(newY){
         //  发现lazyload组件，只会通过scrollY的变化来触发图片加载？
         this._getNewIndexInMainList();
+      },
+      diff(newDiff){
+//        fixedTop需要是负值
+        let fixedTop = (newDiff > 0 && newDiff < TITLE_HEIGHT) ? -(TITLE_HEIGHT - newDiff) : 0;
+//        为了不让fixed头部dom随时被渲染，优化效率
+        if (this.fixedTop === fixedTop) return;
+        this.fixedTop = fixedTop;
+//        优化完毕
+        this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
       }
     }
   }
