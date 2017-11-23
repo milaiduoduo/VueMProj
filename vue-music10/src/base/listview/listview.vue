@@ -1,5 +1,10 @@
 <template>
-  <scroll class="listview" :data='data' ref="listview">
+  <scroll class="listview"
+          :data='data'
+          :listen-scroll="listenScroll"
+          :probe-type="probeType"
+          @scroll="scroll"
+          ref="listview">
     <ul>
       <li v-for="group in data" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
@@ -14,7 +19,8 @@
     <div class="list-shortcut" @touchstart.stop.prevent="onShortcutTouchStart"
          @touchmove.stop.prevent="onShortcutTouchMove">
       <ul>
-        <li class="item" v-for="(item,index) in shortcutList" :data-index="index">
+        <li class="item" v-for="(item,index) in shortcutList" :data-index="index"
+            :class="{'current':currentIndex === index}">
           {{item}}
         </li>
       </ul>
@@ -36,6 +42,12 @@
     components: {
       Scroll
     },
+    data(){
+      return {
+        scrollY: -1,
+        currentIndex: 0
+      }
+    },
     computed: {
       shortcutList(){
         return this.data.map((item) => {
@@ -45,6 +57,9 @@
     },
     created(){
       this.touch = {};
+      this.listenScroll = true;
+      this.probeType = 3;
+      this.listHeight = [];
     },
     methods: {
       onShortcutTouchStart(e){
@@ -55,12 +70,59 @@
       },
       onShortcutTouchMove(e){
         this.touch.y2 = e.touches[0].pageY;
-        let gap = Math.floor(this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT
+        let gap = Math.floor((this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT);
         let nowAnchorIndex = this.touch.anchorIndex + gap;
         this._scrollTo(nowAnchorIndex);
       },
+      scroll(pos){
+        this.scrollY = pos.y;
+//        this._getNewIndexInMainList();
+      },
       _scrollTo(index){
+        if (!index && index !== 0) return;
+        if (index < 0) index = 0;
+        if (index > this.listHeight.length - 2) index = this.listHeight.length - 2;
+        console.log('index:', index);
+        this.scrollY = -this.listHeight[index];
         this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0);
+      },
+      _calculateHeight(){
+        const list = this.$refs.listGroup;
+        let height = 0;
+        this.listHeight.push(0);
+        for (let i = 0; i < list.length; i++) {
+          let item = list[i];
+          height += item.clientHeight;
+          this.listHeight.push(height);
+        }
+      },
+      _getNewIndexInMainList(){
+        const listHeight = this.listHeight;
+        let newY = this.scrollY;
+        if (newY > 0) {
+          this.currentIndex = 0;
+          return;
+        }
+        for (let i = 0; i < listHeight.length - 1; i++) {
+          let height1 = listHeight[i];
+          let height2 = listHeight[i + 1];
+          if (-newY >= height1 && -newY < height2) {
+            this.currentIndex = i;
+            return;
+          }
+        }
+        this.currentIndex = listHeight.length - 2;
+      }
+    },
+    watch: {
+      data(){
+        setTimeout(() => {
+          this._calculateHeight();
+        }, 20);
+      },
+      scrollY(newY){
+        //  发现lazyload组件，只会通过scrollY的变化来触发图片加载？
+        this._getNewIndexInMainList();
       }
     }
   }
