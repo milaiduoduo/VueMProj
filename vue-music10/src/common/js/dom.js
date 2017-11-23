@@ -12,8 +12,8 @@ export function hasClass(el, className) {
   return reg.test(el.className);
 }
 
-export function getAndSetAttributeData(el, name, val) {
-  let newName = 'data-' + name;
+export function getAndSetAttributeData(el, attributName, val) {
+  let newName = attributName;
   if (!val) {
     return el.getAttribute(newName);
   } else {
