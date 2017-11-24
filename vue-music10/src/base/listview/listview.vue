@@ -9,7 +9,7 @@
       <li v-for="group in data" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li v-for="item in group.items" class="list-group-item">
+          <li @click="selectItem(item)" v-for="item in group.items" class="list-group-item">
             <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{item.name}}</span>
           </li>
@@ -37,7 +37,7 @@
   import Scroll from 'base/scroll/scroll';
   import Loading from 'base/loading/loading';
   import {getAndSetAttributeData} from 'common/js/dom';
-  
+
   const ANCHOR_HEIGHT = 18;
   const TITLE_HEIGHT = 30;
 
@@ -79,6 +79,9 @@
       this.listHeight = [];
     },
     methods: {
+      selectItem(item){
+        this.$emit('select', item);
+      },
       onShortcutTouchStart(e){
         this.touch.y1 = e.touches[0].pageY;
         let anchorIndex = parseInt(getAndSetAttributeData(e.target, 'data-index'));

@@ -57,9 +57,9 @@
     },
     created() {
       this._getRecommend();
-      setTimeout(() => {
-        this._getDiscList()
-      }, 10000);
+//      setTimeout(() => {
+      this._getDiscList()
+//      }, 10000);
     },
     methods: {
       loadImage(){
