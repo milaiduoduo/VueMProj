@@ -5,6 +5,13 @@
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
+      <div class="play-wrapper">
+        <div ref="playBtn" v-show="songs.length>0"
+             class="play">
+          <i class="icon-play"></i>
+          <span class="text">随机播放全部</span>
+        </div>
+      </div>
       <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
@@ -15,12 +22,16 @@
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
+      <div v-show="!songs.length" class="loading-container">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
 <script type='text/ecmascript-6'>
   import Scroll from 'base/scroll/scroll';
   import SongList from 'base/song-list/song-list';
+  import Loading from 'base/loading/loading'
 
   const RESERVED_HEIGHT = 40;
 
@@ -32,7 +43,8 @@
     },
     components: {
       Scroll,
-      SongList
+      SongList,
+      Loading
     },
     props: {
       bgImage: {
@@ -90,9 +102,11 @@
         if (newScrollY < this.maxTransalteY) {
           zIndex = 10;
           this.$refs.bgImage.style.paddingTop = '40px';
+          this.$refs.playBtn.style.display = 'none';
         } else {
           zIndex = 0;
           this.$refs.bgImage.style.paddingTop = '70%';
+          this.$refs.playBtn.style.display = '';
         }
 //        实现向下拖动歌手歌曲列表时，歌手图片随之变大效果
         percent = Math.abs(newScrollY / this.imgHeight);
@@ -107,7 +121,6 @@
           blur = Math.min(20 * percent, 20);
           this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`;
           this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`;
-          console.log('blur:', blur, this.$refs.filter.style['transform']);
         }
         this.$refs.bgImage.style.zIndex = zIndex;
       }
