@@ -80,7 +80,7 @@
     },
     methods: {
       selectItem(item){
-        this.$emit('select', item);
+        this.$emit('selectItem', item);
       },
       onShortcutTouchStart(e){
         this.touch.y1 = e.touches[0].pageY;

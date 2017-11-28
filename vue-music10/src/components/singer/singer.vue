@@ -1,6 +1,7 @@
 <template>
   <div class="singer" ref="singer">
-    <list-view @select="selectSinger" :data="this.singers"></list-view>
+    <!--list-view类通讯录组件-->
+    <list-view @selectItem="selectSinger" :data="this.singers"></list-view>
     <router-view></router-view>
   </div>
 </template>
@@ -27,12 +28,14 @@
       ListView
     },
     methods: {
+//    selectSinger是listView暴露出来的select事件
       selectSinger(singer){
 //        console.log('singer:', singer);
         this.$router.push({
           path: `/singer/${singer.id}`
         });
         this.setSinger(singer);
+//        console.log('singer.vue,singer:', singer);
       },
       _getSingerList(){
         getSingerList().then((res) => {

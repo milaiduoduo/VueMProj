@@ -16,7 +16,7 @@ export function getSingerList() {
   return jsonp(url, urlParam, options);
 }
 
-export function getSingerDetail(singerId) {
+export function getSongListOfSinger(singerId) {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg';
   const urlParam = Object.assign({}, commonParams, {
     hostUin: 0,
