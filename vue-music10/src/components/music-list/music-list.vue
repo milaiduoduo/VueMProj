@@ -76,9 +76,11 @@
       scrollY(newScrollY){
         let zIndex = 0;
         let translateY = Math.max(this.maxTransalteY, newScrollY);
+//        [优化]
         if (newScrollY < 0) {
           this.$refs.layer.style['transform'] = `translate3d(0,${translateY}px,0)`;
         }
+//        [优化]
         if (newScrollY < this.maxTransalteY) {
           zIndex = 10;
           this.$refs.bgImage.style.paddingTop = '40px';
