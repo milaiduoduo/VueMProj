@@ -93,8 +93,7 @@
           zIndex = 0;
           this.$refs.bgImage.style.paddingTop = '70%';
         }
-
-//        实现向下拖动歌手歌曲列表时，歌手图片随之变大效果 
+//        实现向下拖动歌手歌曲列表时，歌手图片随之变大效果
         if (newScrollY > 0) {
           zIndex = 10;
           let scale = Math.abs(1 + newScrollY / this.imgHeight);
