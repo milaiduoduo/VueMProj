@@ -5,7 +5,7 @@
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
-      <div class="filter"></div>
+      <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
     <scroll class="list" :data="songs" ref="list"
@@ -77,7 +77,8 @@
       scrollY(newScrollY){
         let zIndex = 0;
         let translateY = Math.max(this.maxTransalteY, newScrollY);
-
+        let blur = 0;
+        let percent = 0;
 //        实现歌曲列表向上拖动到顶部的效果
 //        [优化]
         if (newScrollY < 0) {
@@ -94,11 +95,19 @@
           this.$refs.bgImage.style.paddingTop = '70%';
         }
 //        实现向下拖动歌手歌曲列表时，歌手图片随之变大效果
+        percent = Math.abs(newScrollY / this.imgHeight);
         if (newScrollY > 0) {
+//          实现向下拖动歌手歌曲列表时，歌手图片随之变大效果
           zIndex = 10;
-          let scale = Math.abs(1 + newScrollY / this.imgHeight);
+          let scale = 1 + percent;
           this.$refs.bgImage.style['transform'] = `scale(${scale})`;
           this.$refs.bgImage.style['webkitTransform'] = `scale(${scale})`;
+        } else {
+//            实现向上拖动歌手歌曲列表时，歌手图片随之模糊
+          blur = Math.min(20 * percent, 20);
+          this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`;
+          this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`;
+          console.log('blur:', blur, this.$refs.filter.style['transform']);
         }
         this.$refs.bgImage.style.zIndex = zIndex;
       }
