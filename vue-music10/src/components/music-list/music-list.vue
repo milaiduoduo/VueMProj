@@ -56,7 +56,8 @@
     created(){
       this.probeType = 3;
       this.listenScroll = true;
-//      this.maxTransalteY = 0;
+      this.maxTransalteY = 0;
+      this.imgHeight = 0;
     },
     methods: {
       back(){
@@ -67,19 +68,23 @@
       }
     },
     mounted() {
-      let imgHeight = this.$refs.bgImage.clientHeight;
-      this.maxTransalteY = -imgHeight + RESERVED_HEIGHT;
+      this.imgHeight = this.$refs.bgImage.clientHeight;
+      this.maxTransalteY = -this.imgHeight + RESERVED_HEIGHT;
       //  $el，获取vue dom的真实dom
-      this.$refs.list.$el.style.top = `${imgHeight}px`;
+      this.$refs.list.$el.style.top = `${this.imgHeight}px`;
     },
     watch: {
       scrollY(newScrollY){
         let zIndex = 0;
         let translateY = Math.max(this.maxTransalteY, newScrollY);
+
+//        实现歌曲列表向上拖动到顶部的效果
 //        [优化]
         if (newScrollY < 0) {
           this.$refs.layer.style['transform'] = `translate3d(0,${translateY}px,0)`;
+          this.$refs.layer.style['webkitTransform'] = `translate3d(0,${translateY}px,0)`;
         }
+//        解决歌曲列表拖到到最顶端，文字溢出的问题
 //        [优化]
         if (newScrollY < this.maxTransalteY) {
           zIndex = 10;
@@ -87,6 +92,14 @@
         } else {
           zIndex = 0;
           this.$refs.bgImage.style.paddingTop = '70%';
+        }
+
+//        实现向下拖动歌手歌曲列表时，歌手图片随之变大效果 
+        if (newScrollY > 0) {
+          zIndex = 10;
+          let scale = Math.abs(1 + newScrollY / this.imgHeight);
+          this.$refs.bgImage.style['transform'] = `scale(${scale})`;
+          this.$refs.bgImage.style['webkitTransform'] = `scale(${scale})`;
         }
         this.$refs.bgImage.style.zIndex = zIndex;
       }
